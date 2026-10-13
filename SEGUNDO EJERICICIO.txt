@@ -1,0 +1,133 @@
+package com.example.layout
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.layout.ui.theme.LayoutTheme
+
+class MainActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            LayoutTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Box(Modifier.padding(paddingValues = innerPadding)) {
+                        ConstraintExample2()
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ConstraintExample2() {
+    ConstraintLayout(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        val (boxRed, boxBlue, boxMagenta, boxYellow, boxGreen, boxBlack, boxCyan) = createRefs()
+
+        val boxSize = 125.dp
+        val verticalGap = boxSize   // hueco entre verde-rojo y rojo-negro
+        val horizontalGap = 0.dp    // laterales pegados a la columna central
+
+        // Rojo: centro
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Red)
+                .constrainAs(boxRed) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
+
+        // Verde: arriba del rojo, con un hueco de una caja
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Green)
+                .constrainAs(boxGreen) {
+                    bottom.linkTo(boxRed.top, margin = verticalGap)
+                    start.linkTo(boxRed.start)
+                    end.linkTo(boxRed.end)
+                }
+        )
+
+        // Negro: abajo del rojo, con un hueco de una caja
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Black)
+                .constrainAs(boxBlack) {
+                    top.linkTo(boxRed.bottom, margin = verticalGap)
+                    start.linkTo(boxRed.start)
+                    end.linkTo(boxRed.end)
+                }
+        )
+
+        // Azul: izquierda, en la fila entre verde y rojo
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Blue)
+                .constrainAs(boxBlue) {
+                    end.linkTo(boxRed.start, margin = horizontalGap)
+                    top.linkTo(boxGreen.bottom)
+                    bottom.linkTo(boxRed.top)
+                }
+        )
+
+        // Amarillo: derecha, en la fila entre verde y rojo
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Yellow)
+                .constrainAs(boxYellow) {
+                    start.linkTo(boxRed.end, margin = horizontalGap)
+                    top.linkTo(boxGreen.bottom)
+                    bottom.linkTo(boxRed.top)
+                }
+        )
+
+        // Magenta: izquierda, en la fila entre rojo y negro
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Magenta)
+                .constrainAs(boxMagenta) {
+                    end.linkTo(boxRed.start, margin = horizontalGap)
+                    top.linkTo(boxRed.bottom)
+                    bottom.linkTo(boxBlack.top)
+                }
+        )
+
+        // Cyan: derecha, en la fila entre rojo y negro
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Cyan)
+                .constrainAs(boxCyan) {
+                    start.linkTo(boxRed.end, margin = horizontalGap)
+                    top.linkTo(boxRed.bottom)
+                    bottom.linkTo(boxBlack.top)
+                }
+        )
+    }
+}

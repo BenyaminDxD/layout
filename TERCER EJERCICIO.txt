@@ -1,0 +1,138 @@
+package com.example.layout
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.layout.ui.theme.LayoutTheme
+
+class MainActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            LayoutTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Box(Modifier.padding(paddingValues = innerPadding)) {
+                        ConstraintExample2()
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ConstraintExample2() {
+    ConstraintLayout(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        val (boxRed, boxBlue, boxMagenta, boxYellow, boxGreen,
+            boxCyan, boxBlack1, boxBlack2) = createRefs()
+
+        val boxSize = 125.dp
+        val smallSize = boxSize / 3   // 3 cajas pequeñas llenan el ancho de la caja roja
+        val margin = 16.dp
+
+        // Rojo: centrado horizontalmente, bajado una caja + margen
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Red)
+                .constrainAs(boxRed) {
+                    top.linkTo(parent.top, margin = boxSize + margin)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
+
+        // Azul: esquina superior izquierda del rojo
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Blue)
+                .constrainAs(boxBlue) {
+                    end.linkTo(boxRed.start)
+                    bottom.linkTo(boxRed.top)
+                }
+        )
+
+        // Magenta: esquina superior derecha del rojo
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Magenta)
+                .constrainAs(boxMagenta) {
+                    start.linkTo(boxRed.end)
+                    bottom.linkTo(boxRed.top)
+                }
+        )
+
+        // Amarillo: esquina inferior izquierda del rojo
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Yellow)
+                .constrainAs(boxYellow) {
+                    end.linkTo(boxRed.start)
+                    top.linkTo(boxRed.bottom)
+                }
+        )
+
+        // Verde: esquina inferior derecha del rojo
+        Box(
+            modifier = Modifier
+                .size(boxSize)
+                .background(Color.Green)
+                .constrainAs(boxGreen) {
+                    start.linkTo(boxRed.end)
+                    top.linkTo(boxRed.bottom)
+                }
+        )
+
+        // Cyan: a la derecha del azul, alineado con su borde inferior
+        Box(
+            modifier = Modifier
+                .size(smallSize)
+                .background(Color.Cyan)
+                .constrainAs(boxCyan) {
+                    start.linkTo(boxBlue.end)
+                    bottom.linkTo(boxBlue.bottom)
+                }
+        )
+
+        // Negro 1: a la derecha del cyan, apoyado sobre su borde superior
+        Box(
+            modifier = Modifier
+                .size(smallSize)
+                .background(Color.Black)
+                .constrainAs(boxBlack1) {
+                    start.linkTo(boxCyan.end)
+                    bottom.linkTo(boxCyan.top)
+                }
+        )
+
+        // Negro 2: a la derecha del negro 1, apoyado sobre su borde superior
+        Box(
+            modifier = Modifier
+                .size(smallSize)
+                .background(Color.Black)
+                .constrainAs(boxBlack2) {
+                    start.linkTo(boxBlack1.end)
+                    bottom.linkTo(boxBlack1.top)
+                }
+        )
+    }
+}
